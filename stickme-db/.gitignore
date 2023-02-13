@@ -1,0 +1,10 @@
+.metadata
+target/
+bin/
+
+### Eclipse ###
+.project
+.settings
+
+### Others ###
+.DS_Store
