@@ -1,0 +1,8 @@
+spring.datasource.url=jdbc:postgresql://localhost:5432/<DATABASE>
+spring.datasource.username=postgres
+spring.datasource.password=<PASSWORD>
+
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+stickme.cors.allowedOrigins=http://localhost:5500
