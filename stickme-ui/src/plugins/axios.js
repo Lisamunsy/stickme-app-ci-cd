@@ -13,8 +13,8 @@ import axios from 'axios';
  * L'interceptor ici declare une fonction qui sera appele a chaque reception d'une reponse avant que les methodes
  * get/post... ne retournent la reponse au code client.
  * https://axios-http.com/docs/interceptors
- * Dans cet exemple on simplifie l'objet reponse par défaut pour le rendre plus lisible et ne retenir que les informations
- * qui nous interessent (status et data).
+ * Dans cet exemple on simplifie l'objet reponse par defaut pour le rendre plus lisible et ne retenir que les informations
+ * qui nous interesse (status et data).
  * 
  * L'instance d'axios est ensuite ajoutee dans les proprietes globales de Vue.
 */

@@ -8,7 +8,7 @@ public interface StickerDetail {
 
     String getDescription();
 
-    String getImageUrl();
+    String getImageFullName();
 
     BigDecimal getPrice();
 

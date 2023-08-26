@@ -18,7 +18,7 @@ CREATE TABLE stickers (
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
 	description VARCHAR(1000) NOT NULL,
-	image_url VARCHAR(300) UNIQUE NOT NULL,
+	image_full_name VARCHAR(41) UNIQUE NOT NULL,
 	price DECIMAL(5, 2) NOT NULL,
 	size_id INTEGER REFERENCES sizes(id) NOT NULL,
 	aspect_id INTEGER REFERENCES aspects(id) NOT NULL,

@@ -10,5 +10,5 @@ public interface StickerItem {
 
     BigDecimal getPrice();
 
-    String getImageUrl();
+    String getImageFullName();
 }

@@ -30,7 +30,7 @@ export default {
     <div class="card mb-3 shadow-sm">
         <div class="row p-3 align-items-center">
             <div class="col-md-4 text-center">
-                <img :src="baseUrl + sticker.imageUrl" class="img-fluid" :alt="sticker.name">
+                <img :src="baseUrl + sticker.imageFullName" class="img-fluid" :alt="sticker.name">
             </div>
             <div class="col-md-8">
                 <div class="card-body p-0">

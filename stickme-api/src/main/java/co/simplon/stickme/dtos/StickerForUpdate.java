@@ -8,8 +8,6 @@ public interface StickerForUpdate {
 
     String getDescription();
 
-    String getImageUrl();
-
     BigDecimal getPrice();
 
     Long getSizeId();

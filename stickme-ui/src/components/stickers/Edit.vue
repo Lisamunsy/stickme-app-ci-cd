@@ -44,7 +44,7 @@ export default {
             </thead>
             <tbody class="text-nowrap  align-middle">
                 <tr v-for="sticker in stickers">
-                    <td class="text-center"><img :src="baseUrl + sticker.imageUrl" class="img-fluid"
+                    <td class="text-center"><img :src="baseUrl + sticker.imageFullName" class="img-fluid"
                             :alt="sticker.name">
                     </td>
                     <td>{{ sticker.name }}</td>

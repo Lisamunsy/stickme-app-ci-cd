@@ -8,7 +8,7 @@ public interface StickerAdminItem {
 
     String getName();
 
-    String getImageUrl();
+    String getImageFullName();
 
     LocalDate getDateAdded();
 }

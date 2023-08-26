@@ -13,13 +13,12 @@ export default {
     data() {
         return {
             id: this.route.params.id,
-            baseUrl: import.meta.env.VITE_IMG_BASE_URL,
             sizes: [],
             aspects: [],
             inputs: {
                 name: null,
                 description: null,
-                imageUrl: null,
+                file: undefined,
                 sizeId: 0,
                 aspectId: 0,
                 price: null
@@ -31,7 +30,11 @@ export default {
             inputs: {
                 name: { required, maxLength: maxLength(100) },
                 description: { required, maxLength: maxLength(1000) },
-                imageUrl: { required, maxLength: maxLength(50) },
+                file: {
+                    maxValue: (file) => {
+                        return file ? file.size <= 1048576 : true;
+                    }
+                },
                 sizeId: { minValue: minValue(1) },
                 aspectId: { minValue: minValue(1) },
                 price: { required, between: between(0.01, 100.0) }
@@ -39,8 +42,20 @@ export default {
         }
     },
     methods: {
+        fileSelected(event) {
+            console.log(event.target.files[0]);
+            this.inputs.file = event.target.files[0];
+        },
         async submit() {
-            const resp = await this.$http.put(`/stickers/${this.id}`, this.inputs);
+            console.log(this.inputs.file);
+            const formData = new FormData();
+            Object.keys(this.inputs).forEach((key) => {
+                const value = this.inputs[key];
+                if (value) {
+                    formData.append(key, value);
+                }
+            });
+            const resp = await this.$http.put(`/stickers/${this.id}`, formData);
             if (resp.status === 204) {
                 this.$toast.success('toast-global', 'Sticker updated with success.');
                 this.$router.push({ name: 'stickers-edit' });
@@ -72,30 +87,29 @@ export default {
 
 <template>
     <h1>Update sticker</h1>
-    <form novalidate @submit.prevent="submit">
+    <form @submit.prevent="submit" novalidate>
         <div class="row mb-3">
             <div class="col-12">
                 <label for="name" class="form-label required">Name</label>
-                <input v-model.trim="inputs.name" id="name" name="name" type="text" maxlength="100" class="form-control"
+                <input v-model.trim="inputs.name" id="name" name="name" type="text" class="form-control"
                     :class="{ 'is-invalid': validator.inputs.name.$error }">
+                <div class="form-text">Must be a unique sticker name and not exceed 100 characters.</div>
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-12">
                 <label for="description" class="form-label required">Description</label>
-                <textarea v-model.trim="inputs.description" id="description" name="description" maxlength="1000"
-                    rows="3" class="form-control"
-                    :class="{ 'is-invalid': validator.inputs.description.$error }"></textarea>
+                <textarea v-model.trim="inputs.description" id="description" name="description" rows="5"
+                    class="form-control" :class="{ 'is-invalid': validator.inputs.description.$error }"></textarea>
+                <div class="form-text">Must not exceed 1000 characters.</div>
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-12">
-                <label for="imageUrl" class="form-label required">Image URL</label>
-                <div class="input-group">
-                    <span class="input-group-text">{{ baseUrl }}</span>
-                    <input v-model.trim="inputs.imageUrl" id="imageUrl" name="imageUrl" type="text" maxlength="50"
-                        class="form-control" :class="{ 'is-invalid': validator.inputs.imageUrl.$error }">
-                </div>
+                <label for="file" class="form-label">Image</label>
+                <input @change="fileSelected" accept="image/jpeg,image/png,image/gif" id="file" name="file" type="file"
+                    class="form-control" :class="{ 'is-invalid': validator.inputs.file.$error }">
+                <div class="form-text">Must be JPEG, PNG or GIF, and not exceed 1MB. Will replace current image.</div>
             </div>
         </div>
         <div class="row">
@@ -103,7 +117,6 @@ export default {
                 <label for="sizeId" class="form-label required">Size</label>
                 <select v-model.number="inputs.sizeId" id="sizeId" name="sizeId" class="form-select"
                     :class="{ 'is-invalid': validator.inputs.sizeId.$error }">
-                    <option selected disabled value="0">Choose a size</option>
                     <LabelValues :items="sizes" />
                 </select>
             </div>
@@ -111,7 +124,6 @@ export default {
                 <label for="aspectId" class="form-label required">Aspect</label>
                 <select v-model.number="inputs.aspectId" id="aspectId" name="aspectId" class="form-select"
                     :class="{ 'is-invalid': validator.inputs.aspectId.$error }">
-                    <option selected disabled value="0">Choose an aspect</option>
                     <LabelValues :items="aspects" />
                 </select>
             </div>
@@ -122,6 +134,7 @@ export default {
                     <input v-model.number="inputs.price" id="price" name="price" type="number" class="form-control"
                         :class="{ 'is-invalid': validator.inputs.price.$error }">
                 </div>
+                <div class="form-text">Must not exceed €100.</div>
             </div>
             <div class="d-grid d-md-flex justify-content-md-end mb-3">
                 <button type="submit" class="btn btn-dark" :disabled="validator.$invalid">Sauvegarder</button>

@@ -9,6 +9,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
+
+import co.simplon.stickme.dtos.validators.FileSize;
+import co.simplon.stickme.dtos.validators.MimeType;
+
 public class StickerCreate {
 
     @NotBlank
@@ -19,9 +25,11 @@ public class StickerCreate {
     @Size(max = 1000)
     private String description;
 
-    @NotBlank
-    @Size(max = 300)
-    private String imageUrl;
+    @NotNull
+    @MimeType({ MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE,
+	    MediaType.IMAGE_PNG_VALUE })
+    @FileSize
+    private MultipartFile file;
 
     @NotNull
     @DecimalMin("0.01")
@@ -56,12 +64,12 @@ public class StickerCreate {
 	this.description = description;
     }
 
-    public String getImageUrl() {
-	return imageUrl;
+    public MultipartFile getFile() {
+	return file;
     }
 
-    public void setImageUrl(String imageUrl) {
-	this.imageUrl = imageUrl;
+    public void setFile(MultipartFile file) {
+	this.file = file;
     }
 
     public BigDecimal getPrice() {
@@ -91,8 +99,8 @@ public class StickerCreate {
     @Override
     public String toString() {
 	return String.format(
-		"{name=%s, description=%s, imageUrl=%s, "
-			+ "price=%s, sizeId=%s, aspectId=%s}",
-		name, description, imageUrl, price, sizeId, aspectId);
+		"{name=%s, description=%s, price=%s, sizeId=%s, aspectId=%s, file=%s}",
+		name, description, price, sizeId, aspectId,
+		(file != null ? "[BLOB]" : null));
     }
 }

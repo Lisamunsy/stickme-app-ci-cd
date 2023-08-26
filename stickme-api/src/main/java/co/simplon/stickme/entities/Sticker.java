@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
@@ -20,17 +21,17 @@ public class Sticker extends AbstractEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "image_full_name")
+    private String imageFullName;
 
     @Column(name = "price")
     private BigDecimal price;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "size_id")
     private Size size;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aspect_id")
     private Aspect aspect;
 
@@ -57,12 +58,12 @@ public class Sticker extends AbstractEntity {
 	this.description = description;
     }
 
-    public String getImageUrl() {
-	return imageUrl;
+    public String getImageFullName() {
+	return imageFullName;
     }
 
-    public void setImageUrl(String imageUrl) {
-	this.imageUrl = imageUrl;
+    public void setImageFullName(String imageUrl) {
+	this.imageFullName = imageUrl;
     }
 
     public BigDecimal getPrice() {
@@ -106,9 +107,9 @@ public class Sticker extends AbstractEntity {
     @Override
     public String toString() {
 	return String.format(
-		"{id=%s, name=%s, description=%s, imageUrl=%s, "
+		"{id=%s, name=%s, description=%s, imageFullName=%s, "
 			+ "price=%s, size=%s, aspect=%s, dateAdded=%s}",
-		getId(), name, description, imageUrl, price, size, aspect,
-		dateAdded);
+		getId(), name, description, imageFullName, price, "LAZY_LOADED",
+		"LAZY_LOADED", dateAdded);
     }
 }

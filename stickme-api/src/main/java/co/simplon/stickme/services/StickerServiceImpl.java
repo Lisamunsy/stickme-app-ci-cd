@@ -1,9 +1,11 @@
 package co.simplon.stickme.services;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import co.simplon.stickme.dtos.StickerAdminItem;
 import co.simplon.stickme.dtos.StickerCreate;
@@ -22,14 +24,17 @@ import co.simplon.stickme.repositories.StickerRepository;
 @Transactional(readOnly = true)
 public class StickerServiceImpl implements StickerService {
 
+    private final FileStorage storage;
+
     private final SizeRepository sizes;
 
     private final AspectRepository aspects;
 
     private final StickerRepository stickers;
 
-    public StickerServiceImpl(SizeRepository sizes, AspectRepository aspects,
-	    StickerRepository stickers) {
+    public StickerServiceImpl(FileStorage storage, SizeRepository sizes,
+	    AspectRepository aspects, StickerRepository stickers) {
+	this.storage = storage;
 	this.sizes = sizes;
 	this.aspects = aspects;
 	this.stickers = stickers;
@@ -41,12 +46,15 @@ public class StickerServiceImpl implements StickerService {
 	Sticker entity = new Sticker();
 	entity.setName(inputs.getName());
 	entity.setDescription(inputs.getDescription());
-	entity.setImageUrl(inputs.getImageUrl());
 	entity.setPrice(inputs.getPrice());
 	Size size = sizes.getReferenceById(inputs.getSizeId());
 	entity.setSize(size);
 	Aspect aspect = aspects.getReferenceById(inputs.getAspectId());
 	entity.setAspect(aspect);
+	MultipartFile file = inputs.getFile();
+	String baseName = UUID.randomUUID().toString();
+	String fileName = storage.store(file, baseName);
+	entity.setImageFullName(fileName);
 	stickers.save(entity);
     }
 
@@ -56,13 +64,18 @@ public class StickerServiceImpl implements StickerService {
 	Sticker entity = stickers.findById(id).get();
 	entity.setName(inputs.getName());
 	entity.setDescription(inputs.getDescription());
-	entity.setImageUrl(inputs.getImageUrl());
 	entity.setPrice(inputs.getPrice());
 	Size size = sizes.getReferenceById(inputs.getSizeId());
 	entity.setSize(size);
 	Aspect aspect = aspects.getReferenceById(inputs.getAspectId());
 	entity.setAspect(aspect);
-	stickers.save(entity); // => Useless with @Transactional
+	MultipartFile file = inputs.getFile();
+	if (file != null) {
+	    String original = entity.getImageFullName();
+	    String baseName = UUID.randomUUID().toString();
+	    String newFullName = storage.replace(file, baseName, original);
+	    entity.setImageFullName(newFullName);
+	}
     }
 
     @Override
@@ -73,7 +86,10 @@ public class StickerServiceImpl implements StickerService {
     @Override
     @Transactional // read only = false
     public void delete(Long id) {
-	stickers.deleteById(id);
+	Sticker entity = stickers.findById(id).get();
+	String imageFullName = entity.getImageFullName();
+	stickers.delete(entity);
+	storage.delete(imageFullName);
     }
 
     @Override

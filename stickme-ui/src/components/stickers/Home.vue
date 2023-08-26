@@ -24,7 +24,8 @@ export default {
     <div class="row row-cols-1 row-cols-md-4 g-3 mb-3">
         <div class="col" v-for="sticker in stickers">
             <div class="card shadow-sm h-100">
-                <div class="p-3"><img :src="baseUrl + sticker.imageUrl" class="card-img-top" :alt="sticker.name"></div>
+                <div class="p-3"><img :src="baseUrl + sticker.imageFullName" class="card-img-top" :alt="sticker.name">
+                </div>
                 <div class="card-body">
                     <h5 class="card-title">{{ sticker.name }}</h5>
                     <div class="d-flex align-items-center">
