@@ -27,6 +27,9 @@ import co.simplon.stickme.services.StickerService;
 @RequestMapping("/stickers")
 public class StickerController {
 
+    @Value("${stickme.cicd.test}")
+    private String test;
+
     private final StickerService service;
 
     public StickerController(StickerService service) {
@@ -36,6 +39,7 @@ public class StickerController {
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void create(@ModelAttribute @Valid StickerCreate inputs) {
+    System.out.println(test);
 	service.create(inputs);
     }
 
