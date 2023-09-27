@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,8 +39,9 @@ public class StickerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void create(@ModelAttribute @Valid StickerCreate inputs) {
-    System.out.println(test);
+    public void create(
+	    @ModelAttribute @Valid StickerCreate inputs) {
+	System.out.println(test);
 	service.create(inputs);
     }
 
@@ -57,12 +59,14 @@ public class StickerController {
     }
 
     @GetMapping("/{id}/for-update")
-    public StickerForUpdate forUpdate(@PathVariable("id") Long id) {
+    public StickerForUpdate forUpdate(
+	    @PathVariable("id") Long id) {
 	return service.forUpdate(id);
     }
 
     @GetMapping("/{id}/detail")
-    public StickerDetail detail(@PathVariable("id") Long id) {
+    public StickerDetail detail(
+	    @PathVariable("id") Long id) {
 	return service.detail(id);
     }
 
